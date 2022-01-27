@@ -4,7 +4,6 @@
 
 import 'dart:async';
 
-import 'base_client.dart';
 import 'base_request.dart';
 import 'byte_stream.dart';
 
@@ -12,7 +11,7 @@ import 'byte_stream.dart';
 /// connection has been established and the headers have been sent.
 ///
 /// When the request is sent via [BaseClient.send], only the headers and
-/// whatever data has already been written to [StreamedRequest.sink] will be
+/// whatever data has already been written to [StreamedRequest.stream] will be
 /// sent immediately. More data will be sent as soon as it's written to
 /// [StreamedRequest.sink], and when the sink is closed the request will end.
 class StreamedRequest extends BaseRequest {
@@ -33,8 +32,9 @@ class StreamedRequest extends BaseRequest {
       : _controller = StreamController<List<int>>(sync: true),
         super(method, url);
 
-  /// Freezes all mutable fields and returns a single-subscription [ByteStream]
-  /// that emits the data being written to [sink].
+  /// Freezes all mutable fields other than [stream] and returns a
+  /// single-subscription [ByteStream] that emits the data being written to
+  /// [sink].
   @override
   ByteStream finalize() {
     super.finalize();

@@ -24,10 +24,4 @@ void main() {
       expect(() => request.contentLength = 10, throwsStateError);
     });
   });
-  group('#method', () {
-    test('must be a token', () {
-      expect(() => http.StreamedRequest('SUPER LLAMA', dummyUrl),
-          throwsArgumentError);
-    });
-  });
 }

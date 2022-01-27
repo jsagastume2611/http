@@ -48,7 +48,7 @@ class _Parse extends Matcher {
   _Parse(this._matcher);
 
   @override
-  bool matches(Object? item, Map<dynamic, dynamic> matchState) {
+  bool matches(item, Map matchState) {
     if (item is String) {
       dynamic parsed;
       try {
@@ -63,8 +63,11 @@ class _Parse extends Matcher {
   }
 
   @override
-  Description describe(Description description) =>
-      description.add('parses to a value that ').addDescriptionOf(_matcher);
+  Description describe(Description description) {
+    return description
+        .add('parses to a value that ')
+        .addDescriptionOf(_matcher);
+  }
 }
 
 /// A matcher that validates the body of a multipart request after finalization.
@@ -80,7 +83,7 @@ class _BodyMatches extends Matcher {
   _BodyMatches(this._pattern);
 
   @override
-  bool matches(Object? item, Map<dynamic, dynamic> matchState) {
+  bool matches(item, Map matchState) {
     if (item is http.MultipartRequest) {
       return completes.matches(_checks(item), matchState);
     }
@@ -91,8 +94,8 @@ class _BodyMatches extends Matcher {
   Future<void> _checks(http.MultipartRequest item) async {
     var bodyBytes = await item.finalize().toBytes();
     var body = utf8.decode(bodyBytes);
-    var contentType = MediaType.parse(item.headers['content-type']!);
-    var boundary = contentType.parameters['boundary']!;
+    var contentType = MediaType.parse(item.headers['content-type']);
+    var boundary = contentType.parameters['boundary'];
     var expected = cleanUpLiteral(_pattern)
         .replaceAll('\n', '\r\n')
         .replaceAll('{{boundary}}', boundary);
@@ -102,13 +105,14 @@ class _BodyMatches extends Matcher {
   }
 
   @override
-  Description describe(Description description) =>
-      description.add('has a body that matches "$_pattern"');
+  Description describe(Description description) {
+    return description.add('has a body that matches "$_pattern"');
+  }
 }
 
 /// A matcher that matches function or future that throws a
 /// [http.ClientException] with the given [message].
 ///
 /// [message] can be a String or a [Matcher].
-Matcher throwsClientException(String message) => throwsA(
+Matcher throwsClientException(message) => throwsA(
     isA<http.ClientException>().having((e) => e.message, 'message', message));

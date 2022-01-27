@@ -1,31 +1,3 @@
-## 0.13.4
-
-* Throw a more useful error when a client is used after it has been closed.
-* Require Dart 2.14.
-
-## 0.13.3
-
-* Validate that the `method` parameter of BaseRequest is a valid "token".
-
-## 0.13.2
-
-* Add `package:http/retry.dart` with `RetryClient`. This is the same
-  implementation as `package:http_retry` which will be discontinued.
-
-## 0.13.1
-
-* Fix code samples in `README` to pass a `Uri` instance.
-
-## 0.13.0
-
-* Migrate to null safety.
-* Add `const` constructor to `ByteStream`.
-* Migrate `BrowserClient` from `blob` to `arraybuffer`.
-* **Breaking** All APIs which previously allowed a `String` or `Uri` to be
-  passed now require a `Uri`.
-* **Breaking** Added a `body` and `encoding` argument to `Client.delete`. This
-  is only breaking for implementations which override that method.
-
 ## 0.12.2
 
 * Fix error handler callback type for response stream errors to avoid masking

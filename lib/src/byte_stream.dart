@@ -8,12 +8,12 @@ import 'dart:typed_data';
 
 /// A stream of chunks of bytes representing a single piece of data.
 class ByteStream extends StreamView<List<int>> {
-  const ByteStream(Stream<List<int>> stream) : super(stream);
+  ByteStream(Stream<List<int>> stream) : super(stream);
 
   /// Returns a single-subscription byte stream that will emit the given bytes
   /// in a single chunk.
   factory ByteStream.fromBytes(List<int> bytes) =>
-      ByteStream(Stream.value(bytes));
+      ByteStream(Stream.fromIterable([bytes]));
 
   /// Collects the data of this stream in a [Uint8List].
   Future<Uint8List> toBytes() {

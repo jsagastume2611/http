@@ -6,6 +6,8 @@ import 'dart:async';
 import 'dart:html';
 import 'dart:typed_data';
 
+import 'package:pedantic/pedantic.dart' show unawaited;
+
 import 'base_client.dart';
 import 'base_request.dart';
 import 'byte_stream.dart';
@@ -45,20 +47,33 @@ class BrowserClient extends BaseClient {
     _xhrs.add(xhr);
     xhr
       ..open(request.method, '${request.url}', async: true)
-      ..responseType = 'arraybuffer'
+      ..responseType = 'blob'
       ..withCredentials = withCredentials;
     request.headers.forEach(xhr.setRequestHeader);
 
     var completer = Completer<StreamedResponse>();
-
     unawaited(xhr.onLoad.first.then((_) {
-      var body = (xhr.response as ByteBuffer).asUint8List();
-      completer.complete(StreamedResponse(
-          ByteStream.fromBytes(body), xhr.status!,
-          contentLength: body.length,
-          request: request,
-          headers: xhr.responseHeaders,
-          reasonPhrase: xhr.statusText));
+      // TODO(nweiz): Set the response type to "arraybuffer" when issue 18542
+      // is fixed.
+      var blob = xhr.response as Blob ?? Blob([]);
+      var reader = FileReader();
+
+      reader.onLoad.first.then((_) {
+        var body = reader.result as Uint8List;
+        completer.complete(StreamedResponse(
+            ByteStream.fromBytes(body), xhr.status,
+            contentLength: body.length,
+            request: request,
+            headers: xhr.responseHeaders,
+            reasonPhrase: xhr.statusText));
+      });
+
+      reader.onError.first.then((error) {
+        completer.completeError(
+            ClientException(error.toString(), request.url), StackTrace.current);
+      });
+
+      reader.readAsArrayBuffer(blob);
     }));
 
     unawaited(xhr.onError.first.then((_) {

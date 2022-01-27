@@ -13,7 +13,7 @@ import 'package:test/test.dart';
 import 'utils.dart';
 
 void main() {
-  late Directory tempDir;
+  Directory tempDir;
   setUp(() {
     tempDir = Directory.systemTemp.createTempSync('http_test_');
   });

@@ -20,7 +20,7 @@ void main() {
   });
 
   test('boundary characters', () {
-    var testBoundary = String.fromCharCodes(boundaryCharacters);
+    var testBoundary = String.fromCharCodes(BOUNDARY_CHARACTERS);
     var contentType = MediaType.parse('text/plain; boundary=$testBoundary');
     var boundary = contentType.parameters['boundary'];
     expect(boundary, testBoundary);
@@ -244,6 +244,6 @@ void main() {
     var file = http.MultipartFile(
         'file', Future<List<int>>.error('error').asStream(), 1);
     var request = http.MultipartRequest('POST', dummyUrl)..files.add(file);
-    expect(request.finalize().drain<void>(), throwsA('error'));
+    expect(request.finalize().drain(), throwsA('error'));
   });
 }
